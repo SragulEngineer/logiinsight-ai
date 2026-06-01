@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: ./Server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Server/.env
+    environment:
+      - PORT=3000
+      - MONGO_URI
+      - AI_API_KEY
+      - JWT_SECRET
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
