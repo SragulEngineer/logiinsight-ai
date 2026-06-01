@@ -1,0 +1,76 @@
+<div class="min-h-screen bg-slate-950 text-slate-100 p-6 font-sans">
+  <header class="flex justify-between items-center border-b border-slate-800 pb-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-indigo-400">🧠 LogiInsight AI</h1>
+      <p class="text-xs text-slate-400 mt-1">Real-Time Reactive Distributed Aggregator Pipeline</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <span class="flex h-3 w-3 relative">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+      </span>
+      <span class="text-sm font-medium text-slate-300">Live Connection Secure</span>
+    </div>
+  </header>
+
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+    <input 
+      type="text" 
+      placeholder="Filter by runtime string message or target host environment..." 
+      (input)="updateSearch($event)"
+      class="bg-slate-900 border border-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none block w-full md:w-96 p-2.5 text-slate-200 placeholder-slate-500"
+    />
+    <div class="flex space-x-2">
+      <button *ngFor="let sev of ['ALL', 'INFO', 'WARN', 'ERROR', 'FATAL']" 
+              (click)="filterBySeverity(sev)"
+              [ngClass]="selectedSeverity() === sev ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800'"
+              class="px-3 py-1.5 rounded-md text-xs font-semibold transition-all">
+        {{sev}}
+      </button>
+    </div>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+    <div class="p-4 bg-slate-900/50 border-b border-slate-800 text-xs font-semibold uppercase tracking-wider text-slate-400 grid grid-cols-12 gap-2">
+      <div class="col-span-2">Timestamp</div>
+      <div class="col-span-1">Severity</div>
+      <div class="col-span-2">Host Context</div>
+      <div class="col-span-5">Message Payload Structure</div>
+      <div class="col-span-2 text-right">Actions</div>
+    </div>
+
+    <div class="divide-y divide-slate-800 max-h-[650px] overflow-y-auto font-mono text-xs">
+      <div *ngFor="let log of filteredLogs()" class="p-3 grid grid-cols-12 gap-2 items-center hover:bg-slate-800/40 transition-colors">
+        <div class="col-span-2 text-slate-400">{{ log.timestamp | date:'HH:mm:ss.SSS' }}</div>
+        <div class="col-span-1">
+          <span [ngClass]="{
+            'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': log.metadata.severity === 'INFO',
+            'bg-amber-500/10 text-amber-400 border border-amber-500/20': log.metadata.severity === 'WARN',
+            'bg-rose-500/10 text-rose-400 border border-rose-500/20': ['ERROR','FATAL'].includes(log.metadata.severity)
+          }" class="px-2 py-0.5 rounded text-[10px] font-bold">
+            {{ log.metadata.severity }}
+          </span>
+        </div>
+        <div class="col-span-2 text-indigo-300 truncate">{{ log.metadata.host }}</div>
+        <div class="col-span-5 text-slate-300 truncate" [title]="log.message">{{ log.message }}</div>
+        <div class="col-span-2 text-right">
+          <button 
+            *ngIf="['ERROR', 'FATAL'].includes(log.metadata.severity)"
+            (click)="inspectLogDiagnostics(log._id)"
+            class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500 hover:text-white px-2 py-1 rounded transition-all text-[11px] font-medium">
+            AI Diagnosis
+          </button>
+        </div>
+      </div>
+      <div *ngIf="filteredLogs().length === 0" class="p-8 text-center text-slate-500">
+        No operational log signals match current tracking matrix parameters.
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-insight-modal 
+  [isOpen]="isModalOpen()" 
+  [insight]="activeInsight()" 
+  (closeModal)="isModalOpen.set(false)">
+</app-insight-modal>
