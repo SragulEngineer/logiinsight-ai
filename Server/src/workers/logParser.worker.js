@@ -12,6 +12,7 @@ function parseRawLogs(rawLogs, serviceId) {
 
     if (match) {
       const [_, timestamp, severity, host, message] = match;
+      const normalizedSeverity = severity?.toUpperCase();
       
       // Determine if a message contains a stack trace block
       const hasStackTrace = message.includes('at ') || message.includes('Error:');
@@ -20,7 +21,7 @@ function parseRawLogs(rawLogs, serviceId) {
         timestamp: new Date(timestamp),
         metadata: {
           serviceId: serviceId,
-          severity: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'].includes(severity) ? severity : 'INFO',
+          severity: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'].includes(normalizedSeverity) ? normalizedSeverity : 'INFO',
           host: host,
           runtime: 'NodeJS'
         },

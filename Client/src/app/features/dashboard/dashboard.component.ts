@@ -28,7 +28,9 @@ export class DashboardComponent implements OnInit {
     return this.logs().filter(log => {
       const matchesSearch = log.message.toLowerCase().includes(this.searchTerm().toLowerCase()) || 
                             log.metadata.host.toLowerCase().includes(this.searchTerm().toLowerCase());
-      const matchesSeverity = this.selectedSeverity() === 'ALL' || log.metadata.severity === this.selectedSeverity();
+      const selectedSeverity = this.selectedSeverity().toUpperCase();
+      const logSeverity = log.metadata.severity?.toUpperCase() ?? 'INFO';
+      const matchesSeverity = selectedSeverity === 'ALL' || logSeverity === selectedSeverity;
       return matchesSearch && matchesSeverity;
     });
   });

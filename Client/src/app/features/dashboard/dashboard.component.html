@@ -44,18 +44,18 @@
         <div class="col-span-2 text-slate-400">{{ log.timestamp | date:'HH:mm:ss.SSS' }}</div>
         <div class="col-span-1">
           <span [ngClass]="{
-            'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': log.metadata.severity === 'INFO',
-            'bg-amber-500/10 text-amber-400 border border-amber-500/20': log.metadata.severity === 'WARN',
-            'bg-rose-500/10 text-rose-400 border border-rose-500/20': ['ERROR','FATAL'].includes(log.metadata.severity)
+            'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': log.metadata.severity.toUpperCase() === 'INFO',
+            'bg-amber-500/10 text-amber-400 border border-amber-500/20': log.metadata.severity.toUpperCase() === 'WARN',
+            'bg-rose-500/10 text-rose-400 border border-rose-500/20': ['ERROR','FATAL'].includes(log.metadata.severity.toUpperCase())
           }" class="px-2 py-0.5 rounded text-[10px] font-bold">
-            {{ log.metadata.severity }}
+            {{ log.metadata.severity.toUpperCase() }}
           </span>
         </div>
         <div class="col-span-2 text-indigo-300 truncate">{{ log.metadata.host }}</div>
         <div class="col-span-5 text-slate-300 truncate" [title]="log.message">{{ log.message }}</div>
         <div class="col-span-2 text-right">
           <button 
-            *ngIf="['ERROR', 'FATAL'].includes(log.metadata.severity)"
+            *ngIf="['ERROR', 'FATAL'].includes(log.metadata.severity.toUpperCase())"
             (click)="inspectLogDiagnostics(log._id)"
             class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500 hover:text-white px-2 py-1 rounded transition-all text-[11px] font-medium">
             AI Diagnosis
