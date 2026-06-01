@@ -73,4 +73,24 @@ const getMetricsSummary = async (req, res) => {
   }
 };
 
-module.exports = { ingestLogs, getMetricsSummary };
+const getRecentLogs = async (req, res) => {
+  try {
+    const { serviceId } = req.params;
+    const limit = parseInt(req.query.limit, 10) || 200;
+
+    if (!mongoose.Types.ObjectId.isValid(serviceId)) {
+      return res.status(400).json({ error: 'Invalid serviceId provided.' });
+    }
+
+    const logs = await Log.find({ 'metadata.serviceId': new mongoose.Types.ObjectId(serviceId) })
+      .sort({ timestamp: -1 })
+      .limit(limit)
+      .lean();
+
+    res.json(logs);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { ingestLogs, getMetricsSummary, getRecentLogs };

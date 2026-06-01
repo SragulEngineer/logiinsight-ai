@@ -40,6 +40,7 @@ export class LogService {
     this.socket.on('connect', () => {
       // Direct connection joining the specific multi-tenant room channel
       this.socket.emit('join-service-room', this.activeServiceId());
+      console.log(`🔌 Connected to WebSocket for Service ID: ${this.activeServiceId()}`);
     });
 
     // Listeners parsing asynchronous backend events
@@ -57,6 +58,10 @@ export class LogService {
 
   public getHistoricalAnalytics(serviceId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/analytics/${serviceId}`);
+  }
+
+  public getRecentLogs(serviceId: string, limit = 200): Observable<LogEntry[]> {
+    return this.http.get<LogEntry[]>(`${this.apiUrl}/logs/${serviceId}?limit=${limit}`);
   }
 
   public fetchInsight(logId: string): Observable<AIInsight> {

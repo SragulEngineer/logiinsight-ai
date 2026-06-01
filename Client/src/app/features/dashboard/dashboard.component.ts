@@ -34,6 +34,14 @@ export class DashboardComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // Load recent dashboard data immediately after browser reload
+    this.logService.getRecentLogs(this.logService.activeServiceId())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (recentLogs) => this.logs.set(recentLogs),
+        error: () => console.warn('Unable to load recent logs on initial dashboard load.')
+      });
+
     // Pipeline subscribing to Socket.io pushes safely unbinding via modern DestroyRef interop
     this.logService.getLiveLogs()
       .pipe(takeUntilDestroyed(this.destroyRef))
