@@ -16,4 +16,4 @@ ENV PORT=3000
 EXPOSE 3000
 
 # Default command; update if your app entrypoint differs
-CMD ["node", "index.js"]
+CMD ["node", "server.js"]
